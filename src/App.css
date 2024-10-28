@@ -11,7 +11,6 @@
 .App-header {
   display: flex;
   background-color: silver;
-  /* flex-direction: column; */
   justify-content: space-between;
 }
 
@@ -32,7 +31,6 @@
 
 .App-products {
   display:flex;
-  /* justify-content: space-evenly; */
   flex-wrap:wrap
   
 
