@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import {AppContext} from './Products';
 
 export default function Cart() {
-  const { cart } = useContext(AppContext);
+  const { cart,setCart } = useContext(AppContext);
 
 
 console.log(cart)
