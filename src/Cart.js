@@ -1,30 +1,21 @@
-import React, { useContext } from 'react';
-import {AppContext} from './Products';
+import { useContext } from "react";
+import { UserContext } from "./App"; // Import the context
 
 export default function Cart() {
-  const { cart,setCart } = useContext(AppContext);
-
-
-console.log(cart)
-
-  const addProduct = (item) => {
-    setCart((cart) => [...cart, item]);
-  };
-
+  const { cart } = useContext(UserContext); 
 
   return (
     <div>
-     
       <ul>
-        {cart && cart.map((value, index) => (
-          <li>
-            <strong>{value.name}</strong><br />
-            {value.desc}<br />
-            {value.price}- <button onClick={() => addProduct(value)}>Add Product</button>
-          </li>
+        {cart.map((value, index) => (
+          <div key={index}>
+            <li>
+              {value.name} - {value.desc} - {value.price} - {value.qty} - 
+              Total: {value.price * value.qty}
+            </li>
+          </div>
         ))}
       </ul>
-    </div>
-  );
+    </div>
+  );
 }
-

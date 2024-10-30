@@ -30,7 +30,7 @@
 
 
 .App-products {
-  display:flex;
+  display:flex; 
   flex-wrap:wrap
   
 

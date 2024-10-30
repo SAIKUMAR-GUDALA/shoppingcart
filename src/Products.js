@@ -1,9 +1,8 @@
-import React from "react";
-import cart from "./Cart"
-import { useState,createContext } from "react";
-export const AppContext=createContext()
+import React, { useContext, useState } from "react";
+import { UserContext } from "./App"; // Import the context
+
 export default function Products() {
-  const items = [
+  const item = [
     { name: "Product 1", desc: "This is a dummy description", price: 30, img: <img className="App-img" src="https://images.pexels.com/photos/851555/pexels-photo-851555.jpeg?auto=compress&cs=tinysrgb&w=600"></img> },
     { name: "Product 2", desc: "This is a dummy description", price: 80, img: <img className="App-img" src="https://images.pexels.com/photos/1235706/pexels-photo-1235706.jpeg?auto=compress&cs=tinysrgb&w=600"></img> },
     { name: "Product 3", desc: "This is a dummy description", price: 70, img: <img className="App-img" src="https://images.pexels.com/photos/3216564/pexels-photo-3216564.jpeg?auto=compress&cs=tinysrgb&w=600"></img> },
@@ -11,74 +10,57 @@ export default function Products() {
     { name: "Product 5", desc: "This is a dummy description", price: 50, img: <img className="App-img" src="https://images.pexels.com/photos/302904/pexels-photo-302904.jpeg?auto=compress&cs=tinysrgb&w=600"></img> },
     { name: "Product 6", desc: "This is a dummy description", price: 40, img: <img className="App-img" src="https://images.pexels.com/photos/2396220/pexels-photo-2396220.jpeg?auto=compress&cs=tinysrgb&w=600"></img> },
     { name: "Product 7", desc: "This is a dummy description", price: 80, img: <img className="App-img" src="https://images.pexels.com/photos/1710023/pexels-photo-1710023.jpeg?auto=compress&cs=tinysrgb&w=600"></img> },
-    { name: "Product 8", desc: "This is a dummy description", price: 60, img: <img className="App-img" src="https://images.pexels.com/photos/1187317/pexels-photo-1187317.jpeg?auto=compress&cs=tinysrgb&w=600"></img> },
-  ];
-
-  const [count, setCount] = useState(0)
-  const [products, setProducts] = useState(items);
-  const [cart, setCart] = useState([])
-  let val={cart,setCart}
-
-  const addProduct = ((product) => {
-    product.quantity = 1
-    console.log(product.name);
-    setCart((products) => [...products, product]);
-    console.log(products);
-    console.log(cart);
-
-  })
-  const increment=(()=>{
-    console.log('increment');
-
-    setCount(count+1)
+    { name: "Product 8", desc: "This is a dummy description", price: 60, img: <img className="App-img" src="https://images.pexels.com/photos/1187317/pexels-photo-1187317.jpeg?auto=compress&cs=tinysrgb&w=600"></img>},
+  ];
   
-    
-  })
-  const decrement=(()=>{
-    console.log('decrement');
- 
-    
-  })
-  return (
+  const [products, setProducts] = useState(item);
+  const { cart, setCart } = useContext(UserContext); // Access cart from context
 
+  const addProduct = (item) => {
+    setCart((prevCart) => {
+      const existingItem = prevCart.find((cartItem) => cartItem.name === item.name);
+      if (existingItem) {
+        return prevCart.map((cartItem) => {
+          if (cartItem.name === item.name) {
+            return { ...cartItem, qty: cartItem.qty + 1 };
+          }
+          return cartItem;
+        });
+      } else {
+        return [...prevCart, { ...item, qty: 1 }];
+      }
+    });
+  };
+
+  const deleteProduct = (value) => {
+    setCart(cart.filter((product) => product.name !== value.name));
+  };
+
+  return (
     <div className="App-products">
       {products.map((value, index) => (
-        <div className="App-item">
+        <div className="App-item" key={index}>
           {value.img}
           <h3>{value.name}</h3>
           <p>{value.desc}</p>
-          <h4>{value.price}</h4>
-          <button className="App-btn" onClick={() => addProduct(value)}>Add</button>
-
-          {/* <button onClick={()=>count>0 && setCount(count-1)}>-</button>   
-{count}
-<button onClick={()=> setCount(count+1)}>+</button>  */}
+          <div className='App-cost'>
+            <h4>{value.price}</h4>
+            <button onClick={() => addProduct(value)}>Add</button>
+          </div>
         </div>
       ))}
-      <hr></hr>
-      <AppContext.Provider value={{val}}>
+      <hr />
       <ul>
-
-        {cart && cart.map((value, index) => (
-          <li>
-            {value.name}
-            {value.desc}
-            {value.price}
-
-            <button onClick={()=>setCount(count-1)}>-</button>
-            {count} 
-            {value.quantity}
-            <button onClick={()=>setCount(count+1)}>+</button>
-            {value.price * value.quantity}
-           <hr></hr>
-         
-
-
-          </li>
+        {cart.map((value, index) => (
+          <div key={index}>
+            <li>
+              {value.name} - {value.desc} - {value.price} - {value.qty} - 
+              <button onClick={() => deleteProduct(value)}>Delete</button> - 
+              Total amount: {value.price * value.qty}
+            </li>
+          </div>
         ))}
       </ul>
-      <cart/>
-      </AppContext.Provider>
-    </div>
-  );
+    </div>
+  );
 }
